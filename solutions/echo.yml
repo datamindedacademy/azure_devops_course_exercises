@@ -1,0 +1,28 @@
+trigger:
+- main
+
+parameters:
+  - name: my_name
+    type: string
+    default: 'Hannes'
+    values: ['Hannes','De Smet']
+
+stages:
+ - stage: my_stage
+   jobs:
+    - job: job_one
+      pool:
+        vmImage: ubuntu-latest
+      steps:
+      - script: echo "##vso[task.setvariable variable=myOutputVar;isOutput=true]${{parameters.my_name}}!"
+        name: producedVar
+        displayName: 'Run a one-line script'
+    - job: job_two
+      dependsOn: job_one
+      variables:
+        varFromJobOne: $[dependencies.job_one.outputs['producedVar.myOutputVar']]
+      pool:
+        vmImage: windows-latest
+      steps:
+      - script: echo $(varFromJobOne)
+        displayName: 'current path'
