@@ -8,7 +8,7 @@ VOWELS = {"a", "e", "i", "o", "u"}
 def main(req: func.HttpRequest) -> func.HttpResponse:
     logging.info('Python HTTP trigger function processed a request.')
 
-    name = req.params.get('André')
+    name = req.params.get('name')
     if not name:
         try:
             req_body = req.get_json()
@@ -18,7 +18,7 @@ def main(req: func.HttpRequest) -> func.HttpResponse:
             name = req_body.get('name')
 
     if not name:
-        return func.HttpResponse("Een zeer originele begroeting")
+        return func.HttpResponse("Unknown name")
     else:
         return func.HttpResponse(f"Hello {name}. Your name contains {calculate_vowels_in_name(name)} vowels")
 

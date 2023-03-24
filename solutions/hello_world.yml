@@ -1,0 +1,91 @@
+name: $(Build.DefinitionName)_$(SourceBranchName)_$(Date:yyyyMMdd)
+
+trigger:
+  branches:
+    include:
+      - main
+  paths:
+    include:
+      - src/hello_world/azure_functions
+
+pool:
+  vmImage: ubuntu-latest
+
+parameters:
+  - name: python
+    default: "3.6"
+
+variables:
+  functionsDirectory: '$(Build.SourcesDirectory)/src/hello_world/azure_functions/'
+  pythonVenvDir: "$(Build.SourcesDirectory)/.func_venv"
+  artifactName: "FuncAppSourceFiles-$(Build.SourceVersion)"
+  packageName: "functions.zip"
+  servicePrincipal: "TODO"
+  functionAppDEV : "TODO"
+  functionAppPRD : "TODO"
+
+stages:
+  - stage: Build
+    jobs:
+
+      - job: Build
+        steps:
+          # We don't want to pollute the archive with all Python libs, as we're
+          # requesting a remote build anyway.
+          - task: ArchiveFiles@2
+            inputs:
+              rootFolderOrFile: '$(functionsDirectory)'
+              includeRootFolder: false
+              archiveType: 'zip'
+              archiveFile: $(System.ArtifactsDirectory)/$(packageName)
+              replaceExistingArchive: true
+
+          - publish: $(System.ArtifactsDirectory)/$(packageName)
+            artifact: $(artifactName)
+
+  - stage: Test
+    jobs:
+      - job: Test
+        steps:
+          - task: UsePythonVersion@0
+            inputs:
+              versionSpec: ${{ parameters.python }}
+            displayName: "Use python: $python.version)"
+
+          - script: |
+              pip install -r $(functionsDirectory)/requirements.txt
+            displayName: "Install dependencies"
+
+          - script: |
+              pytest $(functionsDirectory)
+            displayName: "Execute all tests included in the folder"
+
+  - stage: DeployDEV
+    dependsOn: Test
+    jobs:
+      - job: DeployDEV
+        steps:
+          - download: current
+            artifact: $(artifactName)
+
+          - task: AzureFunctionApp@1
+            inputs:
+              azureSubscription: $(servicePrincipal)
+              appType: functionAppLinux
+              appName: $(functionAppDEV)
+              package: $(Pipeline.Workspace)/$(artifactName)/$(packageName)
+
+  - stage: DeployPRD
+    dependsOn: DeployDEV
+    jobs:
+        - job: DeployPRD
+          steps:
+            - download: current
+              artifact: $(artifactName)
+
+            - task: AzureFunctionApp@1
+              inputs:
+                azureSubscription: $(servicePrincipal)
+                appType: functionAppLinux
+                appName: $(functionAppPRD)
+                package: $(Pipeline.Workspace)/$(artifactName)/$(packageName)
