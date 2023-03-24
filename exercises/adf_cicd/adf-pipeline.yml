@@ -1,0 +1,65 @@
+# Starter pipeline
+# Start with a minimal pipeline that you can customize to build and deploy your code.
+# Add steps that build, run tests, deploy, and more:
+# https://aka.ms/yaml
+
+trigger:
+- adf_publish
+
+pool:
+  vmImage: windows-latest
+
+variables:
+  resourceGroupName: "azuredevops-course-rg"
+  dataFactoryNameDEV: "TODO"
+  dataFactoryNamePRD: "TODO"
+  azureSubscribtion: "azuredevops-course"
+  subscriptionId: "f49239f9-d51b-4675-a489-0eaad4b0136e"
+
+stages:
+  - stage: deploy
+    jobs:
+      - job: deployment
+        displayName: Deploy PRD
+        steps:
+        - checkout: self
+        - task: AzurePowerShell@5
+          displayName: 'Stop ADF triggers'
+          inputs:
+            azureSubscription: '$(azureSubscribtion)'
+            ScriptType: 'FilePath'
+            ScriptPath: '$(System.DefaultWorkingDirectory)/adf-maintenance.ps1'
+            ScriptArguments:  -armTemplate "$(System.DefaultWorkingDirectory)/$(dataFactoryNameDEV)/ARMTemplateForFactory.json"
+                              -ResourceGroupName "$(resourceGroupName)"
+                              -DataFactoryName "$(dataFactoryNamePRD)"
+                              -predeployment $true
+                              -deleteDeployment $false
+            azurePowerShellVersion: 'LatestVersion'
+
+        - task: AzureResourceManagerTemplateDeployment@3
+          displayName: 'ARM Template deployment'
+          inputs:
+            deploymentScope: 'Resource Group'
+            azureResourceManagerConnection: '$(azureSubscribtion)'
+            subscriptionId: '$(subscriptionId)'
+            action: 'Create Or Update Resource Group'
+            resourceGroupName: $(resourceGroupName)
+            location: 'West Europe'
+            templateLocation: 'Linked artifact'
+            csmFile: '$(System.DefaultWorkingDirectory)/$(dataFactoryNameDEV)/ARMTemplateForFactory.json'
+            csmParametersFile: '$(System.DefaultWorkingDirectory)/$(dataFactoryNameDEV)/ARMTemplateParametersForFactory.json'
+            overrideParameters: -factoryName "$(dataFactoryNamePRD)"
+            deploymentMode: 'Incremental'
+
+        - task: AzurePowerShell@5
+          displayName: 'Clean resources and start ADF triggers'
+          inputs:
+            azureSubscription: '$(azureSubscribtion)'
+            ScriptType: 'FilePath'
+            ScriptPath: '$(System.DefaultWorkingDirectory)/adf-maintenance.ps1'
+            ScriptArguments:  -armTemplate "$(System.DefaultWorkingDirectory)/$(dataFactoryNameDEV)/ARMTemplateForFactory.json"
+                              -ResourceGroupName "$(resourceGroupName)"
+                              -DataFactoryName "$(dataFactoryNamePRD)"
+                              -predeployment $false
+                              -deleteDeployment $true
+            azurePowerShellVersion: 'LatestVersion'
