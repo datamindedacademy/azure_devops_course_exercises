@@ -1,7 +1,3 @@
-# Hands On YAML Pipelines
-
-
-
 ## Hello World Azure Functions
 
 This exercise is a compound one, where we will address several basic and advanced topic of YAML pipelines.

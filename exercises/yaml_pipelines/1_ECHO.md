@@ -1,5 +1,4 @@
-
-## Echo
+# Echo
 In these set of small exercises we will become a little more familiar with the concepts of a YAML pipeline.
 
 1. Create a new pipeline and select your own forked repository as a starting point.
@@ -10,6 +9,8 @@ In these set of small exercises we will become a little more familiar with the c
 
 Let's inspect the pipeline for a second and make some changes to it.
 
+## More changes
+
 1. Create a parameter with the name `myName` and make sure it is a string.
 2. Give it a default value.
 3. Pass several possible values to choose from.
@@ -17,6 +18,7 @@ Let's inspect the pipeline for a second and make some changes to it.
 write `echo Hello *REFERENCE_YOUR_PARAM*`
 5. Save and Run
 
+## Multi-stages
 Until now everything was done in a single stage, in a single job, lets change that!
 
 1. Make sure we have a single stage and 2 separate jobs. 
@@ -30,6 +32,8 @@ For the first job we can use the vmImage `ubuntu-latest`.
 
 Suppose that our first job has some output we want to use in our second.
 Let's simulate this! 
+
+## Using outputs
 
 1. In the first step where its says `echo Hello *REFERENCE_YOUR_PARAM*`, change this line too: `echo "##vso[task.setvariable variable=myOutputVar;isOutput=true]*YOUR_PARAMETER*"`.
 On the line below, add `name: producedVar`. This will make sure that the task has an output variable with the name `myOutputVar` and the value: *YOUR_PARAMETER* and that we can reference it through `producedVar`.
