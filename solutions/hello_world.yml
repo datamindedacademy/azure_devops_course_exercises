@@ -13,16 +13,16 @@ pool:
 
 parameters:
   - name: python
-    default: "3.6"
+    default: "3.8"
 
 variables:
   functionsDirectory: '$(Build.SourcesDirectory)/src/hello_world/azure_functions/'
   pythonVenvDir: "$(Build.SourcesDirectory)/.func_venv"
   artifactName: "FuncAppSourceFiles-$(Build.SourceVersion)"
   packageName: "functions.zip"
-  servicePrincipal: "TODO"
-  functionAppDEV : "TODO"
-  functionAppPRD : "TODO"
+  servicePrincipal: "Azure DM"
+  functionAppDEV : "function-app-relaxing-sponge-dev"
+  functionAppPRD : "function-app-pleasing-chimp-prd"
 
 stages:
   - stage: Build
@@ -49,8 +49,9 @@ stages:
         steps:
           - task: UsePythonVersion@0
             inputs:
-              versionSpec: ${{ parameters.python }}
-            displayName: "Use python: $python.version)"
+              versionSpec: '${{ parameters.python }}'
+              addToPath: true
+            displayName: "Use python: ${{parameters.python}}"
 
           - script: |
               pip install -r $(functionsDirectory)/requirements.txt
