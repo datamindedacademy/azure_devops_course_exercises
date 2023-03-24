@@ -20,7 +20,7 @@ variables:
   pythonVenvDir: "$(Build.SourcesDirectory)/.func_venv"
   artifactName: "FuncAppSourceFiles-$(Build.SourceVersion)"
   packageName: "functions.zip"
-  servicePrincipal: "Azure DM"
+  servicePrincipal: "" # might have to use one that is complete subscribtion
   functionAppDEV : "function-app-relaxing-sponge-dev"
   functionAppPRD : "function-app-pleasing-chimp-prd"
 
