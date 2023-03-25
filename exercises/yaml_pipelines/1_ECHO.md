@@ -1,7 +1,7 @@
 # Echo
 In these set of small exercises we will become a little more familiar with the concepts of a YAML pipeline.
 
-1. Create a new pipeline and select your own forked repository as a starting point.
+1. Fork the repo `azure_devops_course_exercises`
 2. You can select the starter pipeline for now.
 3. Rename the pipeline to `*YOUR_NAME*_echo_pipeline`.
 4. Save and Run.
