@@ -31,10 +31,7 @@ Make sure to use a variable here.
 `poetry run twine upload -r $(MYOWNORIGINALNAME) --config-file $(PYPIRC_PATH) dist/*.whl`
 
 
-
 ### Caching
 We saw that installing the lots od dependencies again and again, might have som impact on performance.
 Make sure that we cache our virtual environment.
-
-For this you will need to use google a bit
-
+For this you will need to use google a bit.

@@ -42,4 +42,4 @@ On the line below, add `name: producedVar`. This will make sure that the task ha
    (If you are stuck, try and google it first!)
 4. Save and run
 
-Good job! I think you are ready for the big exercise now!
+Good job! I think you are ready for the second exercise now!
