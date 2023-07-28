@@ -79,14 +79,14 @@ stages:
   - stage: DeployPRD
     dependsOn: DeployDEV
     jobs:
-        - job: DeployPRD
-          steps:
-            - download: current
-              artifact: $(artifactName)
+      - job: DeployPRD
+        steps:
+          - download: current
+            artifact: $(artifactName)
 
-            - task: AzureFunctionApp@1
-              inputs:
-                azureSubscription: $(servicePrincipal)
-                appType: functionAppLinux
-                appName: $(functionAppPRD)
-                package: $(Pipeline.Workspace)/$(artifactName)/$(packageName)
+          - task: AzureFunctionApp@1
+            inputs:
+              azureSubscription: $(servicePrincipal)
+              appType: functionAppLinux
+              appName: $(functionAppPRD)
+              package: $(Pipeline.Workspace)/$(artifactName)/$(packageName)
