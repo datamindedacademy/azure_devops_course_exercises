@@ -67,5 +67,5 @@ steps:
   displayName: 'Authenticate'
 
 - script: |
-    poetry run twine upload -r example_package --config-file $(PYPIRC_PATH) dist/*.whl
+    poetry run twine upload --repository example_package --config-file $(PYPIRC_PATH) dist/*.whl
   displayName: 'Deploy'
